@@ -1,201 +1,104 @@
-# AWS S3 Skill
+# Agent Skills Collection
 
-Decision-driven agent skill for safe AWS S3 operations.
+Focused, production-ready agent skills for common infrastructure and container workflows.
 
-![type: agent-skill](https://img.shields.io/badge/type-agent--skill-1f2937)
-![scope: AWS S3](https://img.shields.io/badge/scope-AWS%20S3-0f766e)
-![focus: decision-driven](https://img.shields.io/badge/focus-decision--driven-1d4ed8)
+![type: agent-skills](https://img.shields.io/badge/type-agent--skills-1f2937)
+![skills: 2](https://img.shields.io/badge/skills-2-0f766e)
+![focus: infra](https://img.shields.io/badge/focus-infrastructure-1d4ed8)
 
-This repository contains a single agent skill for making the right S3 execution decision: create or adopt, Terraform or CLI/SDK, and how to avoid common mistakes before they become incidents.
+This repository packages two narrow, execution-oriented skills:
+
+- `aws-s3` for safe AWS S3 bucket decisions and object operations
+- `dockerfile-optimizer` for auditing and rewriting Dockerfile and `docker-compose.yml` files
 
 > [!IMPORTANT]
-> This skill enforces a strict boundary:
-> - Terraform is only for infrastructure
-> - AWS CLI or SDK is only for runtime object operations
-> - Existing buckets must be adopted, not recreated
-> - AWS credentials and bucket region must be verified first
-> - Delete operations are destructive and require explicit confirmation
+> These skills are designed for agents that need to act safely and predictably in real projects.
+> They emphasize correct workflow selection, explicit safety checks, and complete outputs instead of partial advice.
 
-## What’s Included
+## Included Skills
 
-- `skills/aws-s3/SKILL.md`  
-  The AWS S3 operational skill for AI agents
+### `aws-s3`
 
-## Overview
+Use this skill when the task involves S3 bucket lifecycle or object operations and the agent needs to choose the right path before acting.
 
-The `aws-s3` skill is built for execution, not theory. It helps an agent choose the correct path before acting:
+Key capabilities:
 
-- create a new bucket only when needed
-- adopt an existing bucket instead of recreating it
-- use Terraform for infrastructure
-- use AWS CLI or SDK for object operations
-- verify identity and region before acting
-- stop before destructive deletes unless explicitly confirmed
-
-## What Makes This Different
-
-Most S3 guidance focuses on commands. This skill focuses on decisions.
-
-It teaches the agent how to choose the right workflow before running anything:
-
-- create vs adopt
-- Terraform vs AWS CLI or SDK
-- safe read/write vs destructive delete
-
-That makes it useful for real execution, not just command lookup.
-
-## Decision Summary
-
-- bucket exists → adopt
-- bucket does not exist → create with Terraform
-- infrastructure → Terraform
-- object operations → AWS CLI or SDK
-- delete → require explicit confirmation
-
-## What the Skill Does
-
-- decide when a new bucket should be created
-- decide when an existing bucket should be adopted
-- use Terraform for bucket infrastructure and managed configuration
-- use AWS CLI or SDK for object-level operations only
+- decide whether to create a new bucket or adopt an existing one
+- separate Terraform-based infrastructure work from AWS CLI or SDK object operations
 - verify AWS identity before acting
-- verify bucket region before operating on existing buckets
-- stop before destructive delete actions unless the user explicitly confirms them
+- verify the region of existing buckets before using them
+- require explicit confirmation for destructive deletes
 
-## Core Decision Model
+Typical requests:
 
-The skill keeps S3 work predictable by enforcing this sequence:
+- “Create a new S3 bucket for this environment with Terraform.”
+- “Import this existing bucket into Terraform.”
+- “Upload files to this S3 bucket.”
+- “Check which region this bucket is in before we use it.”
 
-1. Verify AWS identity with `aws sts get-caller-identity`
-2. Verify bucket region with `aws s3api get-bucket-location --bucket <bucket_name>` when the bucket already exists
-3. Decide whether the task is infrastructure or runtime object work
-4. Decide whether the bucket should be created or adopted
-5. Apply the correct workflow
-6. Refuse deletes unless explicit confirmation is provided
+### `dockerfile-optimizer`
 
-## Supported Workflows
+Use this skill when the task involves auditing, optimizing, or fixing a Dockerfile or `docker-compose.yml`.
 
-### 1. Create Bucket with Terraform
+Key capabilities:
 
-Use this when:
+- analyze Dockerfiles for security, caching, image size, and best-practice issues
+- analyze compose files for dependency ordering, secret leakage, networking, and reliability gaps
+- score findings with critical issues, warnings, and suggestions
+- generate a full optimizer report with rewritten Dockerfile and compose output
+- provide bundled scripts and a best-practices reference for repeatable analysis
 
-- the task is infrastructure provisioning
-- no suitable bucket already exists
-- the bucket should be managed as infrastructure
+Typical requests:
 
-The skill includes Terraform examples for:
-
-- bucket creation
-- versioning
-- server-side encryption
-
-### 2. Adopt Existing Bucket
-
-Use this when:
-
-- the bucket already exists
-- Terraform should manage it going forward
-- recreating the bucket would be incorrect or unsafe
-
-This workflow includes importing the bucket into Terraform state:
-
-```bash
-terraform import aws_s3_bucket.bucket <bucket_name>
-```
-
-### 3. Operate on Bucket Objects
-
-Use this for runtime S3 object operations only, including:
-
-- listing objects
-- uploading files
-- downloading files
-- syncing folders
-
-Example commands covered by the skill:
-
-```bash
-aws s3 ls s3://<bucket_name>
-aws s3 cp file.txt s3://<bucket_name>/
-aws s3 cp s3://<bucket_name>/file.txt .
-aws s3 sync ./folder s3://<bucket_name>/
-```
-
-## Example Execution
-
-User request:
-
-> “Upload `file.txt` to the existing bucket `team-assets-prod`.”
-
-Agent flow:
-
-1. Verify identity with `aws sts get-caller-identity`
-2. Verify bucket region with `aws s3api get-bucket-location --bucket team-assets-prod`
-3. Classify the task as runtime object work
-4. Choose Workflow 3 instead of Terraform
-5. Run the upload command
-
-Final command:
-
-```bash
-aws s3 cp file.txt s3://team-assets-prod/
-```
+- “Optimize this Dockerfile.”
+- “Why is this image too large?”
+- “Audit this docker-compose file.”
+- “Check this container setup for security issues.”
 
 ## Repository Structure
 
 ```text
 .
 ├── README.md
+├── LICENSE
 └── skills/
-    └── aws-s3/
-        └── SKILL.md
+    ├── aws-s3/
+    │   └── SKILL.md
+    └── dockerfile-optimizer/
+        ├── SKILL.md
+        ├── scripts/
+        │   ├── analyze_dockerfile.py
+        │   ├── analyze_compose.py
+        │   └── generate_report.py
+        └── references/
+            └── best_practices.md
 ```
 
-## Using the Skill
+## How To Use
 
-Use this repository when you want an agent to make correct S3 decisions instead of improvising.
+Open the skill directly from the `skills/` directory and invoke it when the request matches its trigger conditions.
 
-Example requests that should trigger this skill:
+Paths:
 
-- “Create a new S3 bucket for this environment with Terraform.”
-- “This bucket already exists. Bring it under Terraform.”
-- “Upload these files to the existing S3 bucket.”
-- “Check which region this bucket is in before we use it.”
-- “Should this be done with Terraform or the AWS CLI?”
+- [`skills/aws-s3/SKILL.md`](skills/aws-s3/SKILL.md)
+- [`skills/dockerfile-optimizer/SKILL.md`](skills/dockerfile-optimizer/SKILL.md)
 
-> [!NOTE]
-> The skill is intentionally narrow. It focuses on S3 bucket decisions and operations, not broad AWS architecture or unrelated cloud services.
+In practice:
 
-## Why This Skill Exists
+1. Identify whether the task is about S3 operations or Docker/container optimization.
+2. Load the matching skill.
+3. Follow the skill workflow exactly, including safety checks and required inputs.
+4. Use bundled scripts where the skill provides them for deterministic analysis.
 
-S3 mistakes are usually decision mistakes, not syntax mistakes. Common failures include:
+## Design Approach
 
-- recreating a bucket that already exists
-- using Terraform for object uploads
-- using CLI commands to replace infrastructure-as-code
-- operating in the wrong AWS account
-- operating against the wrong bucket region
-- treating destructive deletes like routine commands
+These skills are intentionally narrow. Each one aims to reduce a class of operational mistakes:
 
-This skill exists to reduce those mistakes by giving an agent a clear, safe workflow to follow.
+- `aws-s3` prevents incorrect bucket handling, wrong tool selection, and unsafe destructive actions
+- `dockerfile-optimizer` prevents bloated images, weak container security, broken cache behavior, and fragile compose setups
 
-## Safety Guarantees
-
-The skill requires the agent to:
-
-- verify AWS identity before taking action
-- verify existing bucket region before operating
-- keep infrastructure management and object operations separate
-- avoid recreating existing buckets
-- stop for explicit confirmation before destructive deletes
-
-## Quick Start
-
-1. Open [`skills/aws-s3/SKILL.md`](skills/aws-s3/SKILL.md).
-2. Follow the decision flow to classify the task.
-3. Use the matching workflow: create, adopt, or operate.
-4. Apply the built-in safety checks before executing commands.
+That narrowness is deliberate. The goal is not broad cloud or DevOps advice. The goal is a reliable execution path for recurring tasks.
 
 ## Summary
 
-This repository provides one focused skill: safe AWS S3 execution for AI agents. If the task involves bucket creation, bucket adoption, Terraform-managed infrastructure, or runtime object operations, the `aws-s3` skill gives the agent a clear path with the right tool boundaries and safety checks.
+This repository is a small agent-skill bundle for two high-value infrastructure tasks: safe S3 execution and Dockerfile/compose optimization. If the task is in one of those lanes, the skills here give an agent a concrete workflow and reusable resources instead of improvisation.
