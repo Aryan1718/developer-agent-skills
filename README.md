@@ -1,54 +1,53 @@
 # Agent Skills Collection
 
-Focused, production-ready agent skills for common infrastructure and container workflows.
+Production-ready agent skills for two common infrastructure workflows: safe AWS S3 execution and Docker container optimization.
 
-![type: agent-skills](https://img.shields.io/badge/type-agent--skills-1f2937)
-![skills: 2](https://img.shields.io/badge/skills-2-0f766e)
-![focus: infra](https://img.shields.io/badge/focus-infrastructure-1d4ed8)
+![Type](https://img.shields.io/badge/type-agent%20skills-1f2937)
+![Skills](https://img.shields.io/badge/skills-2-0f766e)
+![Focus](https://img.shields.io/badge/focus-infra%20%26%20containers-1d4ed8)
 
-This repository packages two narrow, execution-oriented skills:
-
-- `aws-s3` for safe AWS S3 bucket decisions and object operations
-- `dockerfile-optimizer` for auditing and rewriting Dockerfile and `docker-compose.yml` files
+This repository contains a compact skill bundle intended for practical agent use. Each skill is narrow by design, with explicit decision rules, reusable resources, and safety boundaries that reduce common operational mistakes.
 
 > [!IMPORTANT]
-> These skills are designed for agents that need to act safely and predictably in real projects.
-> They emphasize correct workflow selection, explicit safety checks, and complete outputs instead of partial advice.
+> These skills are built for execution-oriented agents, not generic documentation browsing.
+> They are meant to help an agent choose the correct workflow first, then act with the right constraints.
 
 ## Included Skills
 
 ### `aws-s3`
 
-Use this skill when the task involves S3 bucket lifecycle or object operations and the agent needs to choose the right path before acting.
+Decision-driven guidance for AWS S3 tasks where the agent must choose between creating infrastructure, adopting existing resources, or performing object-level operations.
 
-Key capabilities:
+What it covers:
 
-- decide whether to create a new bucket or adopt an existing one
-- separate Terraform-based infrastructure work from AWS CLI or SDK object operations
-- verify AWS identity before acting
-- verify the region of existing buckets before using them
-- require explicit confirmation for destructive deletes
+- create vs adopt bucket decisions
+- Terraform for infrastructure changes
+- AWS CLI or SDK for runtime object operations
+- AWS identity verification before acting
+- region verification for existing buckets
+- explicit confirmation gates for destructive deletes
 
-Typical requests:
+Examples:
 
 - “Create a new S3 bucket for this environment with Terraform.”
-- “Import this existing bucket into Terraform.”
-- “Upload files to this S3 bucket.”
-- “Check which region this bucket is in before we use it.”
+- “This bucket already exists. Bring it under Terraform.”
+- “Upload these files to an existing S3 bucket.”
+- “Check the bucket region before we use it.”
 
 ### `dockerfile-optimizer`
 
-Use this skill when the task involves auditing, optimizing, or fixing a Dockerfile or `docker-compose.yml`.
+Audit and rewrite support for Dockerfiles and `docker-compose.yml` files, focused on image size, cache efficiency, security, and runtime reliability.
 
-Key capabilities:
+What it covers:
 
-- analyze Dockerfiles for security, caching, image size, and best-practice issues
-- analyze compose files for dependency ordering, secret leakage, networking, and reliability gaps
-- score findings with critical issues, warnings, and suggestions
-- generate a full optimizer report with rewritten Dockerfile and compose output
-- provide bundled scripts and a best-practices reference for repeatable analysis
+- Dockerfile analysis for security, layering, caching, and image-size issues
+- compose analysis for dependency ordering, secret leakage, networking, and resilience gaps
+- structured scoring with critical issues, warnings, and suggestions
+- full rewritten Dockerfile output
+- full rewritten compose output when a compose file is present
+- bundled helper scripts and a Docker best-practices reference
 
-Typical requests:
+Examples:
 
 - “Optimize this Dockerfile.”
 - “Why is this image too large?”
@@ -74,31 +73,69 @@ Typical requests:
             └── best_practices.md
 ```
 
+## Why This Repo Exists
+
+Infrastructure mistakes usually come from choosing the wrong path before any command runs:
+
+- recreating an S3 bucket that should have been adopted
+- using Terraform for object uploads
+- copying an entire Docker build context too early
+- shipping images that run as root
+- exposing services broadly when local binding would be safer
+
+This repository packages skills that force those decisions to be made explicitly.
+
 ## How To Use
 
-Open the skill directly from the `skills/` directory and invoke it when the request matches its trigger conditions.
+Open the relevant skill from `skills/` and follow its workflow exactly.
 
-Paths:
+Primary entry points:
 
 - [`skills/aws-s3/SKILL.md`](skills/aws-s3/SKILL.md)
 - [`skills/dockerfile-optimizer/SKILL.md`](skills/dockerfile-optimizer/SKILL.md)
 
-In practice:
+Typical flow:
 
-1. Identify whether the task is about S3 operations or Docker/container optimization.
-2. Load the matching skill.
-3. Follow the skill workflow exactly, including safety checks and required inputs.
-4. Use bundled scripts where the skill provides them for deterministic analysis.
+1. Match the user request to the correct skill.
+2. Load that skill and follow its decision model.
+3. Use the bundled scripts when the skill provides them.
+4. Preserve the built-in safety checks instead of shortcutting them.
 
-## Design Approach
+> [!NOTE]
+> The skills in this repository are intentionally narrow. They are not broad AWS, Docker, or DevOps playbooks. Their value comes from being opinionated in a few high-risk execution paths.
 
-These skills are intentionally narrow. Each one aims to reduce a class of operational mistakes:
+## Skill Design Principles
 
-- `aws-s3` prevents incorrect bucket handling, wrong tool selection, and unsafe destructive actions
-- `dockerfile-optimizer` prevents bloated images, weak container security, broken cache behavior, and fragile compose setups
+The skills here share a consistent design philosophy:
 
-That narrowness is deliberate. The goal is not broad cloud or DevOps advice. The goal is a reliable execution path for recurring tasks.
+- narrow scope over generic coverage
+- decisions before commands
+- deterministic helper resources where repetition matters
+- clear safety boundaries around destructive or risky actions
+- practical output formats that an agent can use directly
+
+## Skill Highlights
+
+### AWS S3
+
+The `aws-s3` skill focuses on operational correctness:
+
+- verify AWS identity first
+- verify region for existing buckets
+- classify infrastructure work separately from object operations
+- adopt existing buckets instead of recreating them
+- stop for explicit confirmation before deletes
+
+### Dockerfile Optimization
+
+The `dockerfile-optimizer` skill focuses on container quality:
+
+- catch Dockerfile cache-breaking patterns
+- identify security issues such as root users and inline secrets
+- flag image bloat and missing multi-stage opportunities
+- detect compose reliability and networking issues
+- generate a structured optimizer report with rewritten files
 
 ## Summary
 
-This repository is a small agent-skill bundle for two high-value infrastructure tasks: safe S3 execution and Dockerfile/compose optimization. If the task is in one of those lanes, the skills here give an agent a concrete workflow and reusable resources instead of improvisation.
+If the task is either safe S3 execution or Dockerfile and compose optimization, this repository gives an agent a concrete workflow and reusable resources instead of leaving it to improvise.
