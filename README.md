@@ -1,43 +1,21 @@
 # Agent Skills Collection
 
-A small collection of reusable agent skills for common development workflows.
+A collection of skill folders for coding agents that can be used across
+different projects. Each skill is a focused workflow that can be added
+globally or per project and then invoked for practical development tasks.
 
 ![Type](https://img.shields.io/badge/type-agent%20skills-1f2937)
 ![Skills](https://img.shields.io/badge/skills-3-0f766e)
 ![Focus](https://img.shields.io/badge/focus-dev%20workflows-1d4ed8)
 
-This repository contains a few focused skills that can be dropped into an agent
-skill directory and used as building blocks for practical tasks.
+This repository contains simple skills for common tasks like AWS S3 work,
+Dockerfile optimization, and guided Git rebasing.
 
 ## Skills
 
 - `aws-s3` — Safe guidance for AWS S3 bucket decisions and object operations.
 - `dockerfile-optimizer` — Audit and rewrite help for Dockerfile and `docker-compose.yml` files.
 - `git-rebase-help` — Step-by-step help for safe Git rebasing and conflict resolution.
-
-## Repository Structure
-
-```text
-.
-├── README.md
-├── LICENSE
-└── skills/
-    ├── aws-s3/
-    │   ├── README.md
-    │   └── SKILL.md
-    ├── dockerfile-optimizer/
-    │   ├── README.md
-    │   ├── SKILL.md
-    │   ├── scripts/
-    │   │   ├── analyze_dockerfile.py
-    │   │   ├── analyze_compose.py
-    │   │   └── generate_report.py
-    │   └── references/
-    │       └── best_practices.md
-    └── git-rebase-help/
-        ├── README.md
-        └── SKILL.md
-```
 
 ## Add A Skill
 
