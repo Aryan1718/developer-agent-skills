@@ -1,10 +1,10 @@
 # Agent Skills Collection
 
-Production-ready agent skills for two common infrastructure workflows: safe AWS S3 execution and Docker container optimization.
+Production-ready agent skills for three practical workflows: safe AWS S3 execution, Docker container optimization, and guided Git rebasing.
 
 ![Type](https://img.shields.io/badge/type-agent%20skills-1f2937)
-![Skills](https://img.shields.io/badge/skills-2-0f766e)
-![Focus](https://img.shields.io/badge/focus-infra%20%26%20containers-1d4ed8)
+![Skills](https://img.shields.io/badge/skills-3-0f766e)
+![Focus](https://img.shields.io/badge/focus-infra%20%26%20git-1d4ed8)
 
 This repository contains a compact skill bundle intended for practical agent use. Each skill is narrow by design, with explicit decision rules, reusable resources, and safety boundaries that reduce common operational mistakes.
 
@@ -54,6 +54,29 @@ Examples:
 - “Audit this docker-compose file.”
 - “Check this container setup for security issues.”
 
+### `git-rebase-help`
+
+Guided, safety-first Git rebase support for bringing a branch up to date, handling rebases already in progress, and resolving conflicts block-by-block with explicit confirmation before state-changing actions.
+
+What it covers:
+
+- detect whether a rebase is already in progress
+- choose the correct target branch before rebasing
+- assess clean versus dirty working tree state
+- help the user choose between committing or stashing in-progress work
+- start `fetch` plus `rebase` with confirmation gates
+- resolve conflicts file-by-file and block-by-block
+- continue, skip, or abort safely
+- restore stashed work after completion
+- remind about safe push behavior with `--force-with-lease`
+
+Examples:
+
+- “Use `git-rebase-help`.”
+- “Help me rebase this branch onto main.”
+- “Bring this branch up to date with origin/main.”
+- “I’m in the middle of a rebase and need conflict help.”
+
 ## Repository Structure
 
 ```text
@@ -63,14 +86,16 @@ Examples:
 └── skills/
     ├── aws-s3/
     │   └── SKILL.md
-    └── dockerfile-optimizer/
-        ├── SKILL.md
-        ├── scripts/
-        │   ├── analyze_dockerfile.py
-        │   ├── analyze_compose.py
-        │   └── generate_report.py
-        └── references/
-            └── best_practices.md
+    ├── dockerfile-optimizer/
+    │   ├── SKILL.md
+    │   ├── scripts/
+    │   │   ├── analyze_dockerfile.py
+    │   │   ├── analyze_compose.py
+    │   │   └── generate_report.py
+    │   └── references/
+    │       └── best_practices.md
+    └── git-rebase-help/
+        └── SKILL.md
 ```
 
 ## Why This Repo Exists
@@ -93,6 +118,7 @@ Primary entry points:
 
 - [`skills/aws-s3/SKILL.md`](skills/aws-s3/SKILL.md)
 - [`skills/dockerfile-optimizer/SKILL.md`](skills/dockerfile-optimizer/SKILL.md)
+- [`skills/git-rebase-help/SKILL.md`](skills/git-rebase-help/SKILL.md)
 
 Typical flow:
 
@@ -136,6 +162,16 @@ The `dockerfile-optimizer` skill focuses on container quality:
 - detect compose reliability and networking issues
 - generate a structured optimizer report with rewritten files
 
+### Git Rebase Help
+
+The `git-rebase-help` skill focuses on safe, guided history rewriting:
+
+- verify repository state before rebasing
+- choose the correct target branch explicitly
+- require a commit-or-stash decision for dirty working trees
+- explain rebase conflicts with `HEAD` as target branch state and the other side as the replayed user commit
+- require confirmation before `rebase`, `continue`, `skip`, `abort`, `stash pop`, or post-rewrite push steps
+
 ## Summary
 
-If the task is either safe S3 execution or Dockerfile and compose optimization, this repository gives an agent a concrete workflow and reusable resources instead of leaving it to improvise.
+If the task is safe S3 execution, Dockerfile and compose optimization, or guided Git rebasing, this repository gives an agent a concrete workflow and reusable resources instead of leaving it to improvise.
