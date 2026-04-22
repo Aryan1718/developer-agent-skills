@@ -8,8 +8,6 @@ globally or per project and then invoked for practical development tasks.
 ![Skills](https://img.shields.io/badge/skills-4-0f766e)
 ![Focus](https://img.shields.io/badge/focus-dev%20workflows-1d4ed8)
 
-This repository contains simple skills for common tasks like AWS S3 work,
-Dockerfile optimization, guided Git rebasing, and post-change impact analysis.
 
 ## Skills
 
