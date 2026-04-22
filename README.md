@@ -5,19 +5,29 @@ different projects. Each skill is a focused workflow that can be added
 globally or per project and then invoked for practical development tasks.
 
 ![Type](https://img.shields.io/badge/type-agent%20skills-1f2937)
-![Skills](https://img.shields.io/badge/skills-3-0f766e)
+![Skills](https://img.shields.io/badge/skills-4-0f766e)
 ![Focus](https://img.shields.io/badge/focus-dev%20workflows-1d4ed8)
 
 This repository contains simple skills for common tasks like AWS S3 work,
-Dockerfile optimization, and guided Git rebasing.
+Dockerfile optimization, guided Git rebasing, and post-change impact analysis.
 
 ## Skills
 
 - `aws-s3` — Safe guidance for AWS S3 bucket decisions and object operations.
+- `change-impact` — Analyze recent code changes and identify affected areas, likely risks, and follow-up checks.
 - `dockerfile-optimizer` — Audit and rewrite help for Dockerfile and `docker-compose.yml` files.
 - `git-rebase-help` — Step-by-step help for safe Git rebasing and conflict resolution.
 
 ## Add A Skill
+
+To add any of the available skills from this repository:
+
+```bash
+npx skills add Aryan1718/developer-agent-skills
+```
+
+You can also copy individual skill folders manually if you want to install just
+one skill or place it in a custom location.
 
 To make a skill available everywhere, copy the skill folder into:
 
@@ -56,12 +66,14 @@ extra files such as `scripts/`, `references/`, or a local `README.md`.
 Examples:
 
 - `aws-s3`: "Create a new S3 bucket with Terraform"
+- `change-impact`: "What will this affect?"
 - `dockerfile-optimizer`: "Optimize this Dockerfile"
 - `git-rebase-help`: "Help me rebase this branch onto main"
 
 You can also open the skill directly and review its instructions:
 
 - [`skills/aws-s3/SKILL.md`](skills/aws-s3/SKILL.md)
+- [`skills/change-impact/SKILL.md`](skills/change-impact/SKILL.md)
 - [`skills/dockerfile-optimizer/SKILL.md`](skills/dockerfile-optimizer/SKILL.md)
 - [`skills/git-rebase-help/SKILL.md`](skills/git-rebase-help/SKILL.md)
 
